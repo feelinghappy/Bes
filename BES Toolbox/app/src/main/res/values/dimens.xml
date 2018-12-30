@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="eq_column_1_width">34dp</dimen>
+    <dimen name="eq_column_3_width">34dp</dimen>
+    <dimen name="eq_column_6_width">64dp</dimen>
+    <dimen name="eq_sub_ex_width">@dimen/eq_column_1_width</dimen>
+    <dimen name="eq_sub_ex_height">@dimen/eq_column_1_width</dimen>
+    <dimen name="eq_add_ex_width">@dimen/eq_column_3_width</dimen>
+    <dimen name="eq_add_ex_height">@dimen/eq_column_3_width</dimen>
+    <dimen name="eq_edit_box_ex_padding">3dp</dimen>
+    <dimen name="eq_edit_box_text_size">12sp</dimen>
+    <dimen name="eq_tip_text_size">10sp</dimen>
+    <dimen name="eq_btn_text_size">12sp</dimen>
+</resources>

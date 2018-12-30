@@ -1,0 +1,112 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="eq_section_ex">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+    <style name="eq_column_1">
+        <item name="android:layout_width">@dimen/eq_column_1_width</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="eq_column_2">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">50</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="eq_column_3">
+        <item name="android:layout_width">@dimen/eq_column_3_width</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="eq_column_4">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">70</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="eq_column_5">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">70</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="eq_column_6">
+        <item name="android:layout_width">@dimen/eq_column_6_width</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="eq_sub_ex" parent="eq_column_1">
+        <item name="android:padding">5dp</item>
+        <item name="android:layout_width">@dimen/eq_sub_ex_width</item>
+        <item name="android:layout_height">@dimen/eq_sub_ex_height</item>
+        <item name="android:src">@drawable/sub_bg</item>
+    </style>
+
+    <style name="eq_gain_edit_box" parent="eq_column_2">
+        <item name="android:padding">@dimen/eq_edit_box_ex_padding</item>
+        <item name="android:background">@drawable/rnd_rect_border_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:digits">-.0123456789</item>
+        <item name="android:textSize">@dimen/eq_edit_box_text_size</item>
+    </style>
+
+    <style name="eq_add_ex" parent="eq_column_3">
+        <item name="android:padding">5dp</item>
+        <item name="android:layout_width">@dimen/eq_add_ex_width</item>
+        <item name="android:layout_height">@dimen/eq_add_ex_height</item>
+        <item name="android:src">@drawable/add_bg</item>
+    </style>
+
+    <style name="eq_freq_edit_box" parent="eq_column_4">
+        <item name="android:padding">@dimen/eq_edit_box_ex_padding</item>
+        <item name="android:background">@drawable/rnd_rect_border_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:inputType">number</item>
+        <item name="android:textSize">@dimen/eq_edit_box_text_size</item>
+    </style>
+
+    <style name="eq_q_edit_box" parent="eq_column_5">
+        <item name="android:padding">@dimen/eq_edit_box_ex_padding</item>
+        <item name="android:background">@drawable/rnd_rect_border_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:digits">-.0123456789</item>
+        <item name="android:textSize">@dimen/eq_edit_box_text_size</item>
+    </style>
+
+    <style name="eq_edit_box_ex">
+        <item name="android:padding">@dimen/eq_edit_box_ex_padding</item>
+        <item name="android:textSize">@dimen/eq_edit_box_text_size</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#0D0D0D</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:digits">-.0123456789</item>
+        <item name="android:background">@drawable/rnd_rect_border_bg</item>
+    </style>
+
+    <style name="eq_btn_ex">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:background">@drawable/btn_bg</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/eq_btn_text_size</item>
+    </style>
+</resources>

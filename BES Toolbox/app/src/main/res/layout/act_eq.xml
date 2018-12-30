@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            tools:context=".ui.activity.EQActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <View
+                style="@style/eq_column_1"
+                />
+
+            <TextView
+                style="@style/eq_column_2"
+                android:gravity="center"
+                android:text="@string/gain"
+                android:textColor="#0D0D0D"
+                />
+
+            <View
+                style="@style/eq_column_3"
+                />
+
+            <TextView
+                style="@style/eq_column_4"
+                android:gravity="center"
+                android:text="@string/freq"
+                android:textColor="#0D0D0D"
+                />
+
+            <TextView
+                style="@style/eq_column_5"
+                android:gravity="center"
+                android:text="Q"
+                android:textColor="#0D0D0D"
+                />
+
+            <View
+                style="@style/eq_column_6"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <View
+                style="@style/eq_column_1"
+                />
+
+            <TextView
+                style="@style/eq_column_2"
+                android:gravity="center"
+                android:text="@string/gain_unit"
+                android:textColor="#0D0D0D"
+                android:textSize="10sp"
+                />
+
+            <View
+                style="@style/eq_column_3"
+                />
+
+            <TextView
+                style="@style/eq_column_4"
+                android:gravity="center"
+                android:text="@string/freq_unit"
+                android:textColor="#0D0D0D"
+                android:textSize="10sp"
+                />
+
+            <View
+                style="@style/eq_column_5"
+                />
+
+            <View
+                style="@style/eq_column_6"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/eq_column_1"
+                android:gravity="center"
+                android:text="@string/min_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_2"
+                />
+
+            <TextView
+                style="@style/eq_column_3"
+                android:gravity="center"
+                android:text="@string/max_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_4"
+                />
+
+            <View
+                style="@style/eq_column_5"
+                />
+
+            <View
+                style="@style/eq_column_6"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_sub_1"
+                style="@style/eq_sub_ex"
+                app:countUnit="-0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_gain_1"
+                style="@style/eq_gain_edit_box"
+                android:text="0.00"
+                />
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_add_1"
+                style="@style/eq_add_ex"
+                app:countUnit="-0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_freq_1"
+                style="@style/eq_freq_edit_box"
+                android:text="50"
+                />
+
+            <EditText
+                android:id="@+id/iir_q_1"
+                style="@style/eq_q_edit_box"
+                android:text="0.7"
+                />
+
+            <CheckBox
+                android:id="@+id/iir_chk_1"
+                style="@style/eq_column_6"
+                android:text="@string/check"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/eq_column_1"
+                android:gravity="center"
+                android:text="@string/min_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_2"
+                />
+
+            <TextView
+                style="@style/eq_column_3"
+                android:gravity="center"
+                android:text="@string/max_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_4"
+                />
+
+            <View
+                style="@style/eq_column_5"
+                />
+
+            <View
+                style="@style/eq_column_6"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_sub_2"
+                style="@style/eq_sub_ex"
+                app:countUnit="-0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_gain_2"
+                style="@style/eq_gain_edit_box"
+                android:text="0.00"
+                />
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_add_2"
+                style="@style/eq_add_ex"
+                app:countUnit="0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_freq_2"
+                style="@style/eq_freq_edit_box"
+                android:text="250"
+                />
+
+            <EditText
+                android:id="@+id/iir_q_2"
+                style="@style/eq_q_edit_box"
+                android:text="0.7"
+                />
+
+            <CheckBox
+                android:id="@+id/iir_chk_2"
+                style="@style/eq_column_6"
+                android:text="@string/check"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/eq_column_1"
+                android:gravity="center"
+                android:text="@string/min_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_2"
+                />
+
+            <TextView
+                style="@style/eq_column_3"
+                android:gravity="center"
+                android:text="@string/max_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_4"
+                />
+
+            <View
+                style="@style/eq_column_5"
+                />
+
+            <View
+                style="@style/eq_column_6"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_sub_3"
+                style="@style/eq_sub_ex"
+                app:countUnit="-0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_gain_3"
+                style="@style/eq_gain_edit_box"
+                android:text="0.00"
+                />
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_add_3"
+                style="@style/eq_add_ex"
+                app:countUnit="0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_freq_3"
+                style="@style/eq_freq_edit_box"
+                android:text="1000"
+                />
+
+            <EditText
+                android:id="@+id/iir_q_3"
+                style="@style/eq_q_edit_box"
+                android:text="0.7"
+                />
+
+            <CheckBox
+                android:id="@+id/iir_chk_3"
+                style="@style/eq_column_6"
+                android:text="@string/check"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/eq_column_1"
+                android:gravity="center"
+                android:text="@string/min_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_2"
+                />
+
+            <TextView
+                style="@style/eq_column_3"
+                android:gravity="center"
+                android:text="@string/max_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_4"
+                />
+
+            <View
+                style="@style/eq_column_5"
+                />
+
+            <View
+                style="@style/eq_column_6"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_sub_4"
+                style="@style/eq_sub_ex"
+                app:countUnit="-0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_gain_4"
+                style="@style/eq_gain_edit_box"
+                android:text="12.00"
+                />
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_add_4"
+                style="@style/eq_add_ex"
+                app:countUnit="0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_freq_4"
+                style="@style/eq_freq_edit_box"
+                android:text="4000"
+                />
+
+            <EditText
+                android:id="@+id/iir_q_4"
+                style="@style/eq_q_edit_box"
+                android:text="0.7"
+                />
+
+            <CheckBox
+                android:id="@+id/iir_chk_4"
+                style="@style/eq_column_6"
+                android:text="@string/check"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/eq_column_1"
+                android:gravity="center"
+                android:text="@string/min_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_2"
+                />
+
+            <TextView
+                style="@style/eq_column_3"
+                android:gravity="center"
+                android:text="@string/max_gain"
+                android:textColor="#0D0D0D"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+
+            <View
+                style="@style/eq_column_4"
+                />
+
+            <View
+                style="@style/eq_column_5"
+                />
+
+            <View
+                style="@style/eq_column_6"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_sub_5"
+                style="@style/eq_sub_ex"
+                app:countUnit="-0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_gain_5"
+                style="@style/eq_gain_edit_box"
+                android:text="12.00"
+                />
+
+            <com.iir_eq.ui.view.Counter
+                android:id="@+id/iir_add_5"
+                style="@style/eq_add_ex"
+                app:countUnit="0.1"
+                />
+
+            <EditText
+                android:id="@+id/iir_freq_5"
+                style="@style/eq_freq_edit_box"
+                android:text="8000"
+                />
+
+            <EditText
+                android:id="@+id/iir_q_5"
+                style="@style/eq_q_edit_box"
+                android:text="0.7"
+                />
+
+            <CheckBox
+                android:id="@+id/iir_chk_5"
+                style="@style/eq_column_6"
+                android:text="@string/check"
+                android:textSize="@dimen/eq_tip_text_size"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:gravity="center_vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/eq_left_gain_tip"
+                android:textColor="#0D0D0D"
+                />
+
+            <EditText
+                android:id="@+id/iir_left_gain"
+                style="@style/eq_edit_box_ex"
+                android:layout_width="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:text="-4.00"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/eq_right_gain_tip"
+                android:textColor="#0D0D0D"
+                />
+
+            <EditText
+                android:id="@+id/iir_right_gain"
+                style="@style/eq_edit_box_ex"
+                android:layout_width="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:text="-4.00"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/enable"
+                style="@style/eq_btn_ex"
+                android:text="@string/eq_enable"
+                />
+
+            <Button
+                android:id="@+id/disable"
+                style="@style/eq_btn_ex"
+                android:text="@string/eq_disable"
+                />
+
+            <Button
+                android:id="@+id/save"
+                style="@style/eq_btn_ex"
+                android:text="@string/eq_save"
+                />
+
+            <Button
+                android:id="@+id/load"
+                style="@style/eq_btn_ex"
+                android:text="@string/eq_load"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

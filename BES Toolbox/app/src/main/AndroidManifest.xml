@@ -1,0 +1,105 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.iir_eq">
+
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!--android:debuggable="false" 修复sdcard乱码文件名问题-->
+    <application
+        android:allowBackup="true"
+        android:name=".BesApplication"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:persistent="true"
+        android:debuggable="false"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".ui.activity.HomeActivity"
+            android:label="@string/activity_main"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".ui.activity.ClassicScanActivity"
+            android:label="@string/activity_classics_devices_scan"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activity.LeScanActivity"
+            android:label="@string/activity_bluetooth_scan"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activity.EQActivity"
+            android:label="@string/activity_eq_setting"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activity.SppOtaActivity"
+            android:label="@string/activity_spp_ota"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activity.LeOtaActivity"
+            android:label="@string/activity_ble_ota"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".stress.StressLeOtaActivity"
+            android:label="@string/activity_stress_ble_ota"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".stress.StressSppOtaActivity"
+            android:label="@string/activity_stress_spp_ota"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".stress.StressHomeActivity"
+            android:label="@string/activity_stress_home"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".usb.USBOtaActivity"
+            android:label="@string/activity_usb_ota_tools"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".usb.USBOtaDemoActivity"
+            android:label="@string/activity_usb_ota_demo"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+
+        <activity
+            android:name=".ui.activity.HistoryConfigActivity"
+            android:label="@string/history_config"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.nbsp.materialfilepicker.ui.FilePickerActivity"
+            android:label="@string/pick_ota_file"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.activity.PlayerActivity"
+            android:label="@string/player"
+            android:screenOrientation="portrait"/>
+
+
+    </application>
+
+</manifest>

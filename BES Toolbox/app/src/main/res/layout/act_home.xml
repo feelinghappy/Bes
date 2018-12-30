@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/container"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="16dp">
+
+    <Button
+        android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_bg"
+        android:text="@string/player"
+        />
+
+    <Button
+        android:id="@+id/eq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_bg"
+        android:text="@string/activity_eq_setting"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/spp_ota"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_bg"
+        android:text="@string/activity_spp_ota"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/ble_ota"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_bg"
+        android:text="@string/activity_ble_ota"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/stress_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_bg"
+        android:text="@string/activity_stress_home"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/usb_ota_tools_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_bg"
+        android:text="@string/activity_usb_ota_tools"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/usb_ota_demo_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn_bg"
+        android:text="@string/activity_usb_ota_demo"
+        android:textAllCaps="false"
+        />
+
+</LinearLayout>
