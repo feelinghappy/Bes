@@ -11,7 +11,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 21
         versionCode 3
-        versionName "2.0.20171007"
+        versionName "2.0.20190102"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

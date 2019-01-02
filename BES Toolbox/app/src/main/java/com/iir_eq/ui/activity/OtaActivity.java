@@ -34,6 +34,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static com.iir_eq.util.ArrayUtil.extractBytes;
+
 
 /**
  * Created by zhaowanxing on 2017/7/12.
@@ -67,6 +69,12 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
     protected static final int CMD_LOAD_FILE_FOR_NEW_PROFILE = 0x86;
     protected static final int CMD_RESEND_MSG = 0X88 ;
     protected static final int CMD_LOAD_FILE_FOR_NEW_PROFILE_SPP = 0X89 ;
+    //////////////////////////add by fxl 1227 begin//////////////////////////////////
+    protected static final int CMD_RESUME_OTA_CHECK_MSG = 0X8C ;   //resume
+    protected static final int CMD_RESUME_OTA_CHECK_MSG_RESPONSE = 0X8D ; //resume back
+    //////////////////////////add by fxl 1227 end//////////////////////////////////
+
+
 	protected static final int CMD_LOAD_OTA_CONFIG = 0x90;
     protected static final int CMD_START_OTA_CONFIG = 0x91;
     protected static final int CMD_OTA_CONFIG_NEXT = 0x92;
@@ -88,6 +96,8 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
 
     protected HandlerThread mCmdThread;
     protected CmdHandler mCmdHandler;
+    protected byte[] mOtaResumeDataReq;
+    protected byte[] mOtaResumeData;
 
     protected byte[][][] mOtaData;
     protected int mOtaPacketCount = 0;
@@ -118,6 +128,9 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
 
     protected int totalCount = 0 ;
     protected int failedCount = 0 ;
+    protected int resumeSegment = 0;
+
+    protected boolean resumeFlg = false ;
 
     TextView mAddress;
     TextView mName;
@@ -174,14 +187,20 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_UPDATE_INFO:
+                    LOG(TAG, "MSG_UPDATE_INFO");
+                    Log.e("OtaActivity","MSG_UPDATE_INFO");//add by fxl 1226
                     mOtaInfo.setText(msg.obj.toString());
                     break;
                 case MSG_UPDATE_RESULT_INFO :
+                    LOG(TAG, "MSG_UPDATE_RESULT_INFO");
+                    Log.e("OtaActivity","MSG_UPDATE_RESULT_INFO");//add by fxl 1226
                     if(mUpdateStatic != null){
                         mUpdateStatic.setText(msg.obj.toString());
                     }
                     break;
                 case MSG_UPDATE_PROGRESS:
+                    LOG(TAG, "MSG_UPDATE_PROGRESS");
+                    Log.e("OtaActivity","MSG_UPDATE_PROGRESS");//add by fxl 1226
                     if(mOtaProgress != null){
                         mOtaProgress.setProgress((Integer) msg.obj);
                     }else{
@@ -190,6 +209,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     break;
                 case MSG_OTA_TIME_OUT:
                 case MSG_SEND_INFO_TIME_OUT:
+                    Log.e("OtaActivity","MSG_SEND_INFO_TIME_OUT|MSG_SEND_INFO_TIME_OUT time out");//add by fxl 1226
                      LOG(TAG, "MSG_SEND_INFO_TIME_OUT|MSG_SEND_INFO_TIME_OUT time out");
                     if(mOtaInfo != null){
                         mOtaInfo.setText(msg.arg1);
@@ -252,6 +272,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         if (mCmdThread != null && mCmdThread.isAlive()) {
             mCmdThread.quit();
         }
+        resumeFlg = false;
     }
 
     @Override
@@ -396,11 +417,20 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
 
     protected void onConnected() {
         LOG(TAG, "onConnected");
+        /*
         sendCmdDelayed(CMD_SEND_FILE_INFO, 0);
         LogUtils.writeForOTAStatic(TAG , "onConnected ");
         updateInfo(R.string.connected);
         mState = STATE_CONNECTED;
+        reconnectTimes = 0 ;*///////fxl 1227 connect连接上以后需要先check flash信息
+
+        ////////////////////add by fxl 1227 begin///////////////////////////////////
+        sendCmdDelayed(CMD_RESUME_OTA_CHECK_MSG, 0);
+        LogUtils.writeForOTAStatic(TAG , "onConnected ");
+        updateInfo(R.string.connected);
+        mState = STATE_CONNECTED;
         reconnectTimes = 0 ;
+        ////////////////////add by fxl 1227 end/////////////////////////////////////////////////////
     }
 
     protected void onConnectFailed() {
@@ -434,23 +464,27 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
 
     protected void onOtaOver() {
         LOG(TAG, "onOtaOver");
+        Log.e("OtaActivity","onOtaOver");
         totalCount++;
         String result = "Result：Total count = "+totalCount+"  Failure count = "+failedCount ;
         updateResultInfo(result);
+        Log.e("OtaActivity",result);
         int updateTime = (int)((System.currentTimeMillis() - castTime)/1000) ;
         String msg = "Successful time-cost "+updateTime+" s"+" Retransmission count "+sendMsgFailCount+" Speed :"+otaImgSize/(updateTime == 0?otaImgSize:updateTime)+" B/s";
         LogUtils.writeForOTAStatic(TAG , msg);
         msg = "Successful time-cost "+updateTime+" s"+" Speed :"+otaImgSize/(updateTime == 0?otaImgSize:updateTime)+" B/s";
         updateInfo(msg);
+        Log.e("OtaActivity",msg);
         updateProgress(100);
         mOtaPacketCount = 0;
+        resumeFlg = false;
         mOtaPacketItemCount = 0;
         mOtaConfigPacketCount = 0 ;
         mState = STATE_IDLE;
     }
 
     protected void onOtaFailed() {
-        LOG(TAG, "onOtaFailed");
+        Log.e("OtaActivity", "onOtaFailed");
         totalCount++;
         failedCount++;
         String result = "Result：Total count = "+totalCount+"  Failure count = "+failedCount ;
@@ -458,10 +492,12 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         int updateTime = (int)((System.currentTimeMillis() - castTime)/1000) ;
         String msg = "Failed time-cost "+updateTime+" s"+" Retransmission count "+sendMsgFailCount+" Speed :"+otaImgSize/(updateTime == 0?otaImgSize:updateTime)+" B/s";
         LogUtils.writeForOTAStatic(TAG , msg);
+        Log.e("OtaActivity",msg);
         msg = "Failed time-cost "+updateTime+" s"+" Speed :"+otaImgSize/(updateTime == 0?otaImgSize:updateTime)+" B/s";
         updateInfo(msg);
         reconnectTimes = 0 ;
         mOtaPacketCount = 0;
+        resumeFlg = false;
         mOtaPacketItemCount = 0;
         mOtaConfigPacketCount = 0 ;
         mState = STATE_OTA_FAILED;
@@ -479,6 +515,74 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         mWritten = true;
         LOG(TAG , "onWritten mWritten = true");
     }
+
+ 
+
+
+
+
+
+
+    protected void sendBreakPointCheckReq() {
+        LOG("OtaActivity", "sendBreakPointCheckReq");
+        try {
+            mOtaResumeDataReq = new byte[37+4+4] ;//依据协议BES_OTA_SPE_3.0.docx
+            String randomCodestr = null;
+            byte[] randomCode = new byte[32];
+            randomCodestr = (String) SPHelper.getPreference(this, Constants.KEY_OTA_RESUME_VERTIFY_RANDOM_CODE, "");
+            if(randomCodestr==null||randomCodestr=="")
+            {
+                for (int i=0;i<randomCode.length;i++)
+                {
+                    randomCode[i] = (byte)0x01;
+                    mOtaResumeDataReq[i+5] = (byte)0x01;
+                }
+                SPHelper.putPreference(this.getApplicationContext(), Constants.KEY_OTA_RESUME_VERTIFY_RANDOM_CODE, ArrayUtil.toHex(randomCode));
+                Log.e("null fanxiaoli",ArrayUtil.toHex(randomCode));
+            }
+            else
+            {
+                Log.e("randomCodestr",randomCodestr);
+                randomCode = ArrayUtil.toBytes(randomCodestr);
+                Log.e("sendBreakPoCodestr","randomCodestr:"+randomCodestr);
+                Log.e("sendBreak PorandomCode","fanxiaoli:"+ArrayUtil.toHex(randomCode));
+                for (int i=0;i<randomCode.length;i++)
+                {
+                    mOtaResumeDataReq[i+5] = randomCode[i];
+                }
+                Log.e("mOtaResumeDatnormally",""+ArrayUtil.toHex(mOtaResumeDataReq));
+            }
+            mOtaResumeDataReq[0] = (byte)0x8C;
+            mOtaResumeDataReq[1] = (byte)0x42;
+            mOtaResumeDataReq[2] = (byte)0x45;
+            mOtaResumeDataReq[3] = (byte)0x53;
+            mOtaResumeDataReq[4] = (byte)0x54;
+            mOtaResumeDataReq[37] = (byte)0x01;
+            mOtaResumeDataReq[38] = (byte) 0x02;
+            mOtaResumeDataReq[39] = (byte) 0x03;
+            mOtaResumeDataReq[40] = (byte) 0x04;
+            byte[] crc32_data = new byte[36];
+            for (int i=0;i<crc32_data.length;i++)
+            {
+                crc32_data[i] = mOtaResumeDataReq[i+5];
+            }
+
+            long crc32 = ArrayUtil.crc32(crc32_data, 0, 36);
+            mOtaResumeDataReq[41] = (byte) crc32;
+            mOtaResumeDataReq[42] = (byte)(crc32>> 8) ;
+            mOtaResumeDataReq[43] = (byte) (crc32>>16);
+            mOtaResumeDataReq[44] = (byte) (crc32>>24);
+            Log.e("mOtaResumeDataReq",""+ArrayUtil.toHex(mOtaResumeDataReq));
+            sendData(mOtaResumeDataReq);
+        }catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Exception",e.getMessage().toString());
+        } finally {
+
+        }
+    }
+
+    /////////////////////////////////add by fxl 1227 end//////////////////////////////////////////////////////
 
     protected void sendFileInfo() {
         LOG(TAG, "sendFileInfo MSG_SEND_INFO_TIME_OUT");
@@ -1011,7 +1115,72 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                 }
                 mOtaPacketItemCount = 0;
 
-            } else if ((data[0] & 0xFF) == 0x87) {
+            }
+            ///////////////////////fxl add 1227 begin//////////////////////////////////
+            else if ((data[0] & 0xFF) == 0x8D) {
+                Log.e("fanxiaoli fanxiaoli 8d",ArrayUtil.toHex(data)+"");
+                Log.e("onReceive","CMD_RESUME_OTA_CHECK_MSG_RESPONSE");
+                removeTimeout();
+                //sendCmdDelayed(CMD_RESUME_OTA_CHECK_MSG_RESPONSE, 0);
+                byte[] breakpoint = new byte[4];
+                breakpoint = extractBytes(data,1,4);
+                Log.e("extractBytes",ArrayUtil.toHex(breakpoint)+"");
+                if(ArrayUtil.isEqual(breakpoint,new byte[]{(byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF}))
+                {
+                    resumeSegment = 0;
+                    resumeFlg = false;
+                    Log.e("resume","error");
+                }
+                else if(ArrayUtil.isEqual(breakpoint,new byte[]{(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00}))
+                {
+                    Log.e("resume","from 0 fanxiaoli");
+                    resumeFlg = false;
+                    resumeSegment = 0;
+                    sendCmdDelayed(CMD_SEND_FILE_INFO, 0);
+                    LogUtils.writeForOTAStatic(TAG , "onConnected ");
+                    updateInfo(R.string.connected);
+                    mState = STATE_CONNECTED;
+                    reconnectTimes = 0 ;
+                    byte[] randomCode = new byte[32];
+                    randomCode = extractBytes(data,5,32);
+                    String randomCodeStr= ArrayUtil.toHex(randomCode);
+                    LOG(TAG , "random_code_str  fanxiaoli= "+randomCodeStr);
+                    SPHelper.putPreference(this.getApplicationContext(), Constants.KEY_OTA_RESUME_VERTIFY_RANDOM_CODE, randomCodeStr);
+                    randomCodeStr = (String) SPHelper.getPreference(this.getApplicationContext(), Constants.KEY_OTA_RESUME_VERTIFY_RANDOM_CODE, "");
+                    if(randomCodeStr==null) {
+                        Log.e("KEY_OT_VE_RANDOM_CODE", "null    null");
+                    }
+                    else
+                    {
+                        Log.e("KEY_OT_VE_RANDOM_CODE", randomCodeStr);
+                    }
+                }
+                else
+                {
+                    int segment = ArrayUtil.bytesToIntLittle(breakpoint);
+                    Log.e("segment",segment+"");
+                    if(segment!=0) {
+                        resumeFlg = true;
+                        mOtaPacketCount = segment/(1024*4) ;
+                        Log.e("111111 mOtaPacketCount",mOtaPacketCount+"");
+                        //loadFileForNewProfile();
+                        sendCmdDelayed(CMD_LOAD_FILE_FOR_NEW_PROFILE, 0);
+                        Log.e("mOtaData is null", "resume mOtaPacketCount"+mOtaPacketCount);
+                        resumeFlg = false;
+                        Log.e("resume", "resume mOtaPacketCount"+mOtaPacketCount);
+                    }
+
+                    /*sendCmdDelayed(CMD_SEND_FILE_INFO, 0);
+                    LogUtils.writeForOTAStatic(TAG , "onConnected ");
+                    updateInfo(R.string.connected);
+                    mState = STATE_CONNECTED;
+                    reconnectTimes = 0 ;*/////fxl  delete
+
+                }
+
+            }
+            ///////////////////////fxl add 1227 end//////////////////////////////////////
+            else if ((data[0] & 0xFF) == 0x87) {
                 removeTimeout();
                 if ((data[1] & 0xFF) == 0x01) {
 				 	if(isBle()){
@@ -1094,6 +1263,17 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     LOG(TAG , "resend the msg");
                     sendCmdDelayed(CMD_OTA_NEXT, 0);
                     break;
+                ////////////////////////////////////////////////////
+                case CMD_RESUME_OTA_CHECK_MSG:
+                    Log.e(TAG , "CMD_RESUME_OTA_CHECK_MSG");
+                    //sendCmdDelayed(CMD_OTA_NEXT, 0);
+                    sendBreakPointCheckReq();
+                    break;
+                case CMD_RESUME_OTA_CHECK_MSG_RESPONSE:
+                    Log.e(TAG , "CMD_RESUME_OTA_CHECK_MSG_RESPONSE");
+                    //sendCmdDelayed(CMD_OTA_NEXT, 0);
+                    break;
+                ////////////////////////////////////////////////////*/
             }
         }
     }
