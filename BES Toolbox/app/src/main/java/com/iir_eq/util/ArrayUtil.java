@@ -95,4 +95,45 @@ public class ArrayUtil {
         }
         return true;
     }
+
+    /**
+     * 将toHex()16进制字符串转换为byte[]
+     *
+     * @param str
+     * @return
+     * add by fanxiaoli 20190102
+     */
+    public static byte[] toBytes(String str) {
+        if(str == null || str.trim().equals("")) {
+            return new byte[0];
+        }
+        str = str.replace(",","");//与toHex函数对应
+        if(str == null || str.trim().equals("")) {
+            return new byte[0];
+        }
+        byte[] bytes = new byte[str.length() / 2];
+        for(int i = 0; i < str.length() / 2; i++) {
+            String subStr = str.substring(i * 2, i * 2 + 2);
+            bytes[i] = (byte) Integer.parseInt(subStr, 16);
+        }
+        return bytes;
+    }
+
+
+
+    /**
+     * 以小端模式将byte[]转成int
+     * add by fanxiaoli 20190102
+     */
+    public static int bytesToIntLittle(byte[] src) {
+        int value = 0;
+        value = (int) ((src[0] & 0xFF)
+                | ((src[1] << 8) & 0xFF00)
+                | ((src[2] << 16) & 0xFF0000)
+                | ((src[3] << 24) & 0xFF000000));
+        return value;
+
+
+    }
+
 }
