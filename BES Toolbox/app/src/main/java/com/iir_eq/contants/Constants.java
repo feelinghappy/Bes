@@ -23,6 +23,7 @@ public class Constants {
     public static final boolean DEFAULT_UPDATE_BT_NAME = false;
     public static final boolean DEFAULT_UPDATE_BLE_ADDRESS = false;
     public static final boolean DEFAULT_UPDATE_BLE_NAME = false;
+    public static final byte[] DEFAULT_OTA_RESUME_VERTIFY_RANDOM_CODE = null;
 
     public static final String KEY_OTA_CONFIG_CLEAR_USER_DATA = "ota_config_clear_user_data";
     public static final String KEY_OTA_CONFIG_UPDATE_BT_ADDRESS = "ota_config_update_bt_address";
@@ -33,5 +34,5 @@ public class Constants {
     public static final String KEY_OTA_CONFIG_UPDATE_BLE_ADDRESS_VALUE = "ota_config_update_ble_address_value";
     public static final String KEY_OTA_CONFIG_UPDATE_BLE_NAME = "ota_config_update_ble_name";
     public static final String KEY_OTA_CONFIG_UPDATE_BLE_NAME_VALUE = "ota_config_update_ble_name_value";
-
+    public static final String KEY_OTA_RESUME_VERTIFY_RANDOM_CODE = "ota_resume_vertify_random_code";
 }
