@@ -118,5 +118,9 @@
     <string name="usb_no_connect">点击连接设备获取</string>
     <string name="usb_info">当前设备:&#8195;%1$s\nVID:&#8195;%2$s&#8195;PID:&#8195;%3$s\n厂商:&#8195;%4$s</string>
 
+    <string name="resume_request_verify">发送断点续传验证请求</string>
+    <string name="resume_start">断点续传开始</string>
+    <string name="resume_error">断点续传验证错误</string>
+    <string name="write_flash_offset_error">Write flash offset error.</string>
 
 </resources>

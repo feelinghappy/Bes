@@ -98,6 +98,15 @@
         android:progressDrawable="@drawable/progress_bar"
         />
 
+    <TextView
+        android:id="@+id/ota_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="center_horizontal"
+        android:text="0%"
+        />
+
     <Button
         android:id="@+id/start_ota"
         android:layout_width="wrap_content"

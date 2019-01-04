@@ -119,5 +119,11 @@
     <string name="usb_no_connect">Click connecting device to acquire</string>
     <string name="usb_info">Current device:&#8195;%1$s\nVID:&#8195;%2$s&#8195;PID:&#8195;%3$s\nVendor:&#8195;%4$s</string>
 
-
+    <string name="resume_request_verify">Resume request</string>
+    <string name="resume_start">Resume start</string>
+    <string name="resume_error">Resume error</string>
+    <string name="received_size_error">Received size error.</string>
+    <string name="segment_verify_error">Segment verify error.</string>
+    <string name="breakpoint_error">Breakpoint error.</string>
+    <string name="write_flash_offset_error">Write flash offset error.</string>
 </resources>

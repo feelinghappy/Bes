@@ -138,6 +138,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
     TextView mOtaInfo;
     TextView mUpdateStatic ;
     ProgressBar mOtaProgress;
+    TextView mOtaStatus;
     Button pickDevice , pickOtaFile , startOta ;
 
     public void onClick(View view) {
@@ -166,6 +167,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         mOtaInfo = (TextView) findViewById(R.id.ota_info);
         mUpdateStatic = (TextView) findViewById(R.id.update_static);
         mOtaProgress = (ProgressBar) findViewById(R.id.ota_progress);
+        mOtaStatus = (TextView)findViewById(R.id.ota_status);
         pickDevice = (Button) findViewById(R.id.pick_device);
         pickOtaFile = (Button) findViewById(R.id.pick_ota_file);
         startOta = (Button) findViewById(R.id.start_ota);
@@ -203,6 +205,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     Log.e("OtaActivity","MSG_UPDATE_PROGRESS");//add by fxl 1226
                     if(mOtaProgress != null){
                         mOtaProgress.setProgress((Integer) msg.obj);
+                        mOtaStatus.setText((Integer) msg.obj+"%");
                     }else{
                         LOG(TAG, "mOtaProgress is null");
                     }
@@ -423,14 +426,12 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         updateInfo(R.string.connected);
         mState = STATE_CONNECTED;
         reconnectTimes = 0 ;*///////fxl 1227 connect连接上以后需要先check flash信息
-
-        ////////////////////add by fxl 1227 begin///////////////////////////////////
         sendCmdDelayed(CMD_RESUME_OTA_CHECK_MSG, 0);
         LogUtils.writeForOTAStatic(TAG , "onConnected ");
         updateInfo(R.string.connected);
         mState = STATE_CONNECTED;
         reconnectTimes = 0 ;
-        ////////////////////add by fxl 1227 end/////////////////////////////////////////////////////
+
     }
 
     protected void onConnectFailed() {
@@ -516,13 +517,6 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         LOG(TAG , "onWritten mWritten = true");
     }
 
- 
-
-
-
-
-
-
     protected void sendBreakPointCheckReq() {
         LOG("OtaActivity", "sendBreakPointCheckReq");
         try {
@@ -573,6 +567,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
             mOtaResumeDataReq[43] = (byte) (crc32>>16);
             mOtaResumeDataReq[44] = (byte) (crc32>>24);
             Log.e("mOtaResumeDataReq",""+ArrayUtil.toHex(mOtaResumeDataReq));
+            updateInfo(R.string.resume_request_verify);
             sendData(mOtaResumeDataReq);
         }catch (Exception e) {
             e.printStackTrace();
@@ -1068,6 +1063,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                 mOtaPacketItemCount = 0;
                 mOtaPacketCount++;
                 updateProgress(mOtaPacketCount * 100 / mOtaData.length);
+
                 sendCmdDelayed(CMD_OTA_NEXT, 0);
             } else if (ArrayUtil.isEqual(OTA_RESEND_RESPONSE, data)) {
                 removeTimeout();
@@ -1113,15 +1109,35 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     onOtaFailed();
                     sendCmdDelayed(CMD_DISCONNECT, 0);
                 }
+
+                else if((data[1]&0xFF)==0x02)
+                {
+                    updateInfo(getString(R.string.received_size_error));
+                    sendCmdDelayed(CMD_DISCONNECT, 0);
+                }
+                else if((data[1]&0xFF)==0x03)
+                {
+                    updateInfo(getString(R.string.write_flash_offset_error));
+                    sendCmdDelayed(CMD_DISCONNECT, 0);
+                }
+                else if((data[1]&0xFF)==0x04)
+                {
+                    updateInfo(getString(R.string.segment_verify_error));
+                    sendCmdDelayed(CMD_DISCONNECT, 0);
+                }
+                else if((data[1]&0xFF)==0x05)
+                {
+                    updateInfo(getString(R.string.breakpoint_error));
+                    sendCmdDelayed(CMD_DISCONNECT, 0);
+
+                }
                 mOtaPacketItemCount = 0;
 
             }
-            ///////////////////////fxl add 1227 begin//////////////////////////////////
             else if ((data[0] & 0xFF) == 0x8D) {
                 Log.e("fanxiaoli fanxiaoli 8d",ArrayUtil.toHex(data)+"");
                 Log.e("onReceive","CMD_RESUME_OTA_CHECK_MSG_RESPONSE");
                 removeTimeout();
-                //sendCmdDelayed(CMD_RESUME_OTA_CHECK_MSG_RESPONSE, 0);
                 byte[] breakpoint = new byte[4];
                 breakpoint = extractBytes(data,1,4);
                 Log.e("extractBytes",ArrayUtil.toHex(breakpoint)+"");
@@ -1157,29 +1173,23 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                 }
                 else
                 {
+
                     int segment = ArrayUtil.bytesToIntLittle(breakpoint);
                     Log.e("segment",segment+"");
                     if(segment!=0) {
                         resumeFlg = true;
                         mOtaPacketCount = segment/(1024*4) ;
-                        Log.e("111111 mOtaPacketCount",mOtaPacketCount+"");
-                        //loadFileForNewProfile();
+                        updateInfo(getString(R.string.resume_start));
                         sendCmdDelayed(CMD_LOAD_FILE_FOR_NEW_PROFILE, 0);
                         Log.e("mOtaData is null", "resume mOtaPacketCount"+mOtaPacketCount);
                         resumeFlg = false;
                         Log.e("resume", "resume mOtaPacketCount"+mOtaPacketCount);
                     }
 
-                    /*sendCmdDelayed(CMD_SEND_FILE_INFO, 0);
-                    LogUtils.writeForOTAStatic(TAG , "onConnected ");
-                    updateInfo(R.string.connected);
-                    mState = STATE_CONNECTED;
-                    reconnectTimes = 0 ;*/////fxl  delete
 
                 }
 
             }
-            ///////////////////////fxl add 1227 end//////////////////////////////////////
             else if ((data[0] & 0xFF) == 0x87) {
                 removeTimeout();
                 if ((data[1] & 0xFF) == 0x01) {
@@ -1263,7 +1273,6 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     LOG(TAG , "resend the msg");
                     sendCmdDelayed(CMD_OTA_NEXT, 0);
                     break;
-                ////////////////////////////////////////////////////
                 case CMD_RESUME_OTA_CHECK_MSG:
                     Log.e(TAG , "CMD_RESUME_OTA_CHECK_MSG");
                     //sendCmdDelayed(CMD_OTA_NEXT, 0);
@@ -1273,7 +1282,6 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     Log.e(TAG , "CMD_RESUME_OTA_CHECK_MSG_RESPONSE");
                     //sendCmdDelayed(CMD_OTA_NEXT, 0);
                     break;
-                ////////////////////////////////////////////////////*/
             }
         }
     }
