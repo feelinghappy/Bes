@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BES Type-C</string>
+    <string name="activity_main">BES Toolbox</string>
+
+    <string name="current_ota_file">当前升级文件:</string>
+    <string name="pick_ota_file">选择升级文件</string>
+
+    <string name="current_ota_progress">当前升级进度:</string>
+    <string name="clear">清空</string>
+
+    <string name="activity_usb_ota_tools">USB OTA Tools</string>
+    <string name="activity_usb_ota_demo">USB OTA Demo</string>
+    <string name="usb_current_device_title">当前连接设备</string>
+    <string name="usb_current_no_device">未检测有usb设备接入</string>
+    <string name="usb_connect_failed">连接失败</string>
+    <string name="usb_disconnect">已断开</string>
+    <string name="usb_ota_btn">判断升级</string>
+    <string name="usb_connect_btn">点击连接</string>
+    <string name="usb_diconnect_btn">点击断开</string>
+    <string name="usb_ota_tips"></string>
+    <string name="usb_no_ota_file">未选择任何升级文件</string>
+    <string name="usb_ota_human_disable_note">当前正在升级或当前未连接设备接入</string>
+    <string name="usb_ota_human_mode_message">当前为手动升级，需手动将设备进入升级模式</string>
+    <string name="usb_ota_fw_version">固件版本:&#8195;%1$s</string>
+    <string name="usb_ota_serial_number">序列编号:&#8195;%1$s</string>
+    <string name="usb_ota_boot_type">设备需要升级的镜像类型:&#8195;%1$s</string>
+    <string name="usb_ota_is_need_update">升级文件是否满足升级:&#8195;%1$s</string>
+    <string name="usb_no_connect">未连接</string>
+    <string name="usb_info">当前设备:&#8195;%1$s\nVID:&#8195;%2$s&#8195;PID:&#8195;%3$s\n厂商:&#8195;%4$s</string>
+
+
+</resources>

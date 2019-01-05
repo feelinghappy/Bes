@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="current_device_title">当前选中设备：</string>
+    <string name="current_data_title">当前升级文件：</string>
+    <string name="change_data">选择升级文件</string>
+    <string name="burn_data_title">当前升级进度：</string>
+    <string name="burn_data_start">开始升级文件</string>
+    <string name="no_connected_device">未连接</string>
+    <string name="no_data_file">未选择</string>
+    <string name="burn_data_not_start">未开始</string>
+    <string name="empty_value">--</string>
+    <string name="dummy_file">没有文件</string>
+
+    <string name="menu_scan_start">开始扫描</string>
+    <string name="menu_scan_stop">停止扫描</string>
+
+    <string name="state_burn_start">开始升级。。。</string>
+    <string name="state_burn_connecting">正在连接设备。。。</string>
+    <string name="state_burn_connected">设备已连接</string>
+    <string name="state_burn_connect_failed">连接设备失败</string>
+    <string name="state_burn_ota_service_searching">正在搜索OTA服务。。。</string>
+    <string name="state_burn_ota_service_found">已连接OTA服务</string>
+    <string name="state_burn_ota_service_not_found">未找到OTA服务</string>
+    <string name="state_burn_data_loading">加载升级文件。。。</string>
+    <string name="state_burn_data_loading_error">加载升级文件失败</string>
+    <string name="state_burn_data_sending">已连接，正在传输数据。。。</string>
+    <string name="state_burn_data_sending_error">传输数据失败</string>
+    <string name="state_burn_data_send_ok">升级完成</string>
+
+    <string name="error_dialog_title">错误</string>
+    <string name="error_bt_not_supported">设备不支持蓝牙</string>
+    <string name="error_ble_not_supported">设备不支持BLE</string>
+    <string name="error_bt_not_enabled">蓝牙未开启</string>
+    <string name="error_connect_failed">连接设备失败</string>
+    <string name="error_unknown">未知错误</string>
+</resources>
