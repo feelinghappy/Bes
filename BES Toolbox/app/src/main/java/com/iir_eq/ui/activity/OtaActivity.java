@@ -34,7 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static com.iir_eq.util.ArrayUtil.extractBytes;
+
 
 
 /**
@@ -132,6 +132,8 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
 
     protected boolean resumeFlg = false ;
 
+    protected  int segment_verify_error_time = 0;
+
     TextView mAddress;
     TextView mName;
     TextView mOtaFile;
@@ -190,19 +192,16 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
             switch (msg.what) {
                 case MSG_UPDATE_INFO:
                     LOG(TAG, "MSG_UPDATE_INFO");
-                    Log.e("OtaActivity","MSG_UPDATE_INFO");//add by fxl 1226
                     mOtaInfo.setText(msg.obj.toString());
                     break;
                 case MSG_UPDATE_RESULT_INFO :
                     LOG(TAG, "MSG_UPDATE_RESULT_INFO");
-                    Log.e("OtaActivity","MSG_UPDATE_RESULT_INFO");//add by fxl 1226
                     if(mUpdateStatic != null){
                         mUpdateStatic.setText(msg.obj.toString());
                     }
                     break;
                 case MSG_UPDATE_PROGRESS:
                     LOG(TAG, "MSG_UPDATE_PROGRESS");
-                    Log.e("OtaActivity","MSG_UPDATE_PROGRESS");//add by fxl 1226
                     if(mOtaProgress != null){
                         mOtaProgress.setProgress((Integer) msg.obj);
                         mOtaStatus.setText((Integer) msg.obj+"%");
@@ -943,6 +942,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         if (isIdle()) {
             updateProgress(0);
             sendCmdDelayed(CMD_CONNECT, RECONNECT_SPAN);
+
         }
     }
 
@@ -952,6 +952,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         updateInfo(R.string.ota_ing);
         mState = STATE_OTA_ING;
         sendCmdDelayed(CMD_OTA_NEXT, 0);
+
     }
 
     protected void startOtaConfig() {
@@ -1122,8 +1123,26 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                 }
                 else if((data[1]&0xFF)==0x04)
                 {
-                    updateInfo(getString(R.string.segment_verify_error));
-                    sendCmdDelayed(CMD_DISCONNECT, 0);
+                    segment_verify_error_time++;
+                    if(segment_verify_error_time < 3)
+                    {
+                        updateInfo(segment_verify_error_time+"次重传");
+                        mOtaPacketCount = mOtaPacketCount - 1;//回退一位
+                        sendCmdDelayed(CMD_LOAD_FILE_FOR_NEW_PROFILE, 0);
+                    }
+                    else {
+                        updateInfo("重传失败");
+                        segment_verify_error_time = 0;
+                        byte[] clearbyte = new byte[32];
+                        for(int i = 0;i<clearbyte.length;i++)
+                        {
+                            clearbyte[i] =(byte) 0x00;
+                        }
+                        SPHelper.putPreference(this.getApplicationContext(), Constants.KEY_OTA_RESUME_VERTIFY_RANDOM_CODE, ArrayUtil.toHex(clearbyte));
+                        updateInfo(getString(R.string.segment_verify_error));
+                        sendCmdDelayed(CMD_DISCONNECT, 0);
+                    }
+
                 }
                 else if((data[1]&0xFF)==0x05)
                 {
@@ -1139,7 +1158,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                 Log.e("onReceive","CMD_RESUME_OTA_CHECK_MSG_RESPONSE");
                 removeTimeout();
                 byte[] breakpoint = new byte[4];
-                breakpoint = extractBytes(data,1,4);
+                breakpoint = ArrayUtil.extractBytes(data,1,4);
                 Log.e("extractBytes",ArrayUtil.toHex(breakpoint)+"");
                 if(ArrayUtil.isEqual(breakpoint,new byte[]{(byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF}))
                 {
@@ -1158,18 +1177,18 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     mState = STATE_CONNECTED;
                     reconnectTimes = 0 ;
                     byte[] randomCode = new byte[32];
-                    randomCode = extractBytes(data,5,32);
+                    randomCode = ArrayUtil.extractBytes(data,5,32);
                     String randomCodeStr= ArrayUtil.toHex(randomCode);
                     LOG(TAG , "random_code_str  fanxiaoli= "+randomCodeStr);
                     SPHelper.putPreference(this.getApplicationContext(), Constants.KEY_OTA_RESUME_VERTIFY_RANDOM_CODE, randomCodeStr);
-                    randomCodeStr = (String) SPHelper.getPreference(this.getApplicationContext(), Constants.KEY_OTA_RESUME_VERTIFY_RANDOM_CODE, "");
+                    /*randomCodeStr = (String) SPHelper.getPreference(this.getApplicationContext(), Constants.KEY_OTA_RESUME_VERTIFY_RANDOM_CODE, "");
                     if(randomCodeStr==null) {
                         Log.e("KEY_OT_VE_RANDOM_CODE", "null    null");
                     }
                     else
                     {
                         Log.e("KEY_OT_VE_RANDOM_CODE", randomCodeStr);
-                    }
+                    }*////testing code fanxiaoli 20190104
                 }
                 else
                 {
