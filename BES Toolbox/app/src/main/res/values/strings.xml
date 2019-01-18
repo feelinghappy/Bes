@@ -126,4 +126,22 @@
     <string name="segment_verify_error">Segment verify error.</string>
     <string name="breakpoint_error">Breakpoint error.</string>
     <string name="write_flash_offset_error">Write flash offset error.</string>
+
+    <string name="connect_device">CLICK TO CONNECT</string>
+
+    <string name="current_version">current version:</string>
+
+    <string name="pick_ota_file_right">Choose right earbud image</string>
+    <string name="pick_ota_file_left">Choose left earbud image</string>
+    <string name="both_earbuds_in_one_bin">both earbuds in one bin</string>
+    <string name="both_earbuds_in_two_bins">both earbuds in two bin</string>
+    <string name="daul_earbuds_ota_apply">daul earbuds ota apply</string>
+
+    <string name="pick_ota_file_daul">Choose daul earbuds image</string>
+
+    <string name="left_earbud_only">left earbud only</string>
+    <string name="right_earbud_only">right earbud only</string>
+
+    <string name="right_earbud_image">right earbud image</string>
+    <string name="left_earbud_image">left earbud image</string>
 </resources>

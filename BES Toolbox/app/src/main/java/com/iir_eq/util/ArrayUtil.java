@@ -136,4 +136,24 @@ public class ArrayUtil {
 
     }
 
+    /*获取如1.1.1.1格式版本号
+    * add by fanxiaoli 20190114
+    */
+
+    public static String  bytesToVersion(byte[] src) {
+        String version = "";
+        int[] version_int = new int[4];
+        if(src.length==4) {
+            for (int i = 0;i<src.length;i++) {
+                version_int[i] = (int) (src[i] & 0xff);
+                version = version + (String.valueOf(version_int[i]));
+                if (i < 3) {
+                    version = version + ".";
+                }
+            }
+        }
+        return version;
+    }
+
+
 }

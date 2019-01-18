@@ -80,7 +80,7 @@
     <string name="invalid_bt_name">Invalid BT name!</string>
     <string name="invalid_ble_name">Invalid BLE name!</string>
     <string name="load_ota_config_failed">加载OTA配置失败！</string>
-    <string name="load_ota_config_successfully">加载OTA配置成功，开始同步OTA配置z。</string>
+    <string name="load_ota_config_successfully">加载OTA配置成功，开始同步OTA配置。</string>
     <string name="ota_config_time_out">同步OTA配置超时</string>
     <string name="ota_config_failed">同步OTA配置失败！</string>
     <string name="pause_failed">暂停失败！</string>
@@ -123,4 +123,17 @@
     <string name="resume_error">断点续传验证错误</string>
     <string name="write_flash_offset_error">Write flash offset error.</string>
 
+    <string name="connect_device">连接设备</string>
+    <string name="current_version">当前版本:</string>
+
+    <string name="pick_ota_file_right">选择右耳升级文件</string>
+    <string name="pick_ota_file_left">选择左耳升级文件</string>
+    <string name="both_earbuds_in_one_bin">使用同一文件同时升级左右耳</string>
+    <string name="both_earbuds_in_two_bins">使用不同文件同时升级左右耳</string>
+    <string name="daul_earbuds_ota_apply">选择左右耳升级方式</string>
+    <string name="pick_ota_file_daul">配置双耳机升级文件</string>
+    <string name="left_earbud_only">只升级左耳</string>
+    <string name="right_earbud_only">只升级右耳</string>
+    <string name="right_earbud_image">右耳升级文件</string>
+    <string name="left_earbud_image">左耳升级文件</string>
 </resources>
