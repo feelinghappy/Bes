@@ -231,6 +231,8 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
             return;
         }
         if (mState == STATE_CONNECTED && (daulApply != -1)) {
+			dual_in_one_response_ok_time = 0;
+		    daul_step = 0;
             mOtaConfigDialog.show(getSupportFragmentManager(), OTA_CONFIG_TAG);
         }
     }
@@ -402,7 +404,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         super.onCreate(savedInstanceState);
         LOG(TAG, "onCreate");
         setContentView(R.layout.act_ota);
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         initView();
         initConfig();
     }
@@ -432,6 +434,10 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
     protected void onDestroy() {
         super.onDestroy();
         LOG(TAG, "onDestroy");
+        sendCmdDelayed(CMD_DISCONNECT, 0);
+        dual_in_one_response_ok_time = 0;
+        daulApply = -1;
+        daul_step = 0;
         if (mMsgHandler != null) {
             mMsgHandler.removeMessages(MSG_SEND_INFO_TIME_OUT);
             mMsgHandler.removeMessages(MSG_OTA_TIME_OUT);
@@ -460,9 +466,12 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
     @Override
     protected void exit() {
         LOG(TAG, "exit");
-        if (mState == STATE_IDLE) {
+        if (mState == STATE_IDLE) {  
+            dual_in_one_response_ok_time = 0;
+            daulApply = -1;
             finish();
-        } else {
+        } 
+		else {
             showConfirmDialog(R.string.ota_exit_tips, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -1521,6 +1530,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         removeTimeout();
         sendCmdDelayed(CMD_DISCONNECT, 0);
         dual_in_one_response_ok_time = 0;
+		daul_step = 0;
         daulApply = -1;
         mMsgHandler.removeMessages(MSG_SEND_INFO_TIME_OUT);
         mExit = true;
@@ -1607,16 +1617,51 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         LOG(TAG, "onReceive data = " + ArrayUtil.toHex(data));
         synchronized (mOtaLock) {
             if (ArrayUtil.isEqual(OTA_PASS_RESPONSE, data)) {
-                removeTimeout();
-                mOtaPacketItemCount = 0;
-                mOtaPacketCount++;
-                updateProgress(mOtaPacketCount * 100 / mOtaData.length);
-                sendCmdDelayed(CMD_OTA_NEXT, 0);
+				if(daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 1)
+				{
+				    dual_in_one_response_ok_time = 0;
+                	removeTimeout();
+               	 	mOtaPacketItemCount = 0;
+                	mOtaPacketCount++;
+                	updateProgress(mOtaPacketCount * 100 / mOtaData.length);
+                	sendCmdDelayed(CMD_OTA_NEXT, 0);
+				}
+				else if(daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0)
+				{
+				    removeTimeout();
+					dual_in_one_response_ok_time = 1;
+					return;
+				}
+				else 
+				{
+				    removeTimeout();
+               	 	mOtaPacketItemCount = 0;
+                	mOtaPacketCount++;
+                	updateProgress(mOtaPacketCount * 100 / mOtaData.length);
+                	sendCmdDelayed(CMD_OTA_NEXT, 0);
+				}
             }
             else if (ArrayUtil.isEqual(OTA_RESEND_RESPONSE, data)) {
-                removeTimeout();
-                mOtaPacketItemCount = 0;
-                sendCmdDelayed(CMD_OTA_NEXT, 0);
+				if(daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0)
+				{
+					removeTimeout();
+					dual_in_one_response_ok_time = 1;
+					return;
+				}
+				else if(daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 1)
+				{
+				   dual_in_one_response_ok_time = 0;
+				   removeTimeout();
+                   mOtaPacketItemCount = 0;
+                   sendCmdDelayed(CMD_OTA_NEXT, 0);
+				}
+				else
+				{
+				   removeTimeout();
+                   mOtaPacketItemCount = 0;
+                   sendCmdDelayed(CMD_OTA_NEXT, 0);
+				}
+             
             }
             else if (ArrayUtil.startsWith(data, new byte[]{(byte) 0x81, 0x42, 0x45, 0x53, 0x54})) {
                 if (daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0) {
@@ -1763,12 +1808,39 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     }
                 }
                 else if ((data[1] & 0xFF) == 0x02) {
-                    updateInfo(getString(R.string.received_size_error));
-                    sendCmdDelayed(CMD_DISCONNECT, 0);
+					if (daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0) {
+                        dual_in_one_response_ok_time = 1;
+						return;
+                    }
+					else if(daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 1)
+				    {
+				        dual_in_one_response_ok_time = 0;
+				    	updateInfo(getString(R.string.received_size_error));
+                    	sendCmdDelayed(CMD_DISCONNECT, 0);
+				    }
+					else
+					{
+                    	updateInfo(getString(R.string.received_size_error));
+                    	sendCmdDelayed(CMD_DISCONNECT, 0);
+					}
                 }
                 else if ((data[1] & 0xFF) == 0x03) {
-                    updateInfo(getString(R.string.write_flash_offset_error));
-                    sendCmdDelayed(CMD_DISCONNECT, 0);
+					if(daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0)
+					{
+						dual_in_one_response_ok_time = 1;
+						return;
+					}
+					else if(daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 1)
+					{
+					    dual_in_one_response_ok_time = 0;
+						updateInfo(getString(R.string.write_flash_offset_error));
+                    	sendCmdDelayed(CMD_DISCONNECT, 0);
+					}
+					else
+					{
+                    	updateInfo(getString(R.string.write_flash_offset_error));
+                    	sendCmdDelayed(CMD_DISCONNECT, 0);
+					}
                 }
                 else if ((data[1] & 0xFF) == 0x04) {
                     if (daulApply == 2 && dual_in_one_response_ok_time == 0) {
@@ -1817,8 +1889,22 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
 
                 }
                 else if ((data[1] & 0xFF) == 0x05) {
-                    updateInfo(getString(R.string.breakpoint_error));
-                    sendCmdDelayed(CMD_DISCONNECT, 0);
+					if(daulApply == 2 && dual_in_one_response_ok_time == 1)
+					{
+						dual_in_one_response_ok_time = 0;
+						updateInfo(getString(R.string.breakpoint_error));
+                        sendCmdDelayed(CMD_DISCONNECT, 0);
+					}
+					else if(daulApply == 2 && dual_in_one_response_ok_time == 0)
+					{
+						dual_in_one_response_ok_time = 1;
+						return;
+					}
+					else
+					{
+                    	updateInfo(getString(R.string.breakpoint_error));
+                    	sendCmdDelayed(CMD_DISCONNECT, 0);
+					}
 
                 }
                 mOtaPacketItemCount = 0;
@@ -1832,9 +1918,18 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                 breakpoint = ArrayUtil.extractBytes(data, 1, 4);
                 Log.e("extractBytes", ArrayUtil.toHex(breakpoint) + "");
                 if (ArrayUtil.isEqual(breakpoint, new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF})) {
-                    resumeSegment = 0;
-                    resumeFlg = false;
-                    Log.e("resume", "error");
+					if ((daulApply == APPLY_BOTH_EARBUD_IN_ONE) && (dual_in_one_response_ok_time == 1))
+					{
+						dual_in_one_response_ok_time = 0;
+						resumeSegment = 0;
+	                    resumeFlg = false;
+	                    Log.e("resume", "error");
+					}
+					else if((daulApply == APPLY_BOTH_EARBUD_IN_ONE) && (dual_in_one_response_ok_time == 0))
+					{
+						dual_in_one_response_ok_time  = 1;
+						return;
+					}
                 }
                 else if (ArrayUtil.isEqual(breakpoint, new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00})) {
                     Log.e("daulApply ffffff", daulApply + "");
@@ -1842,6 +1937,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
 
                     if ((daulApply == APPLY_BOTH_EARBUD_IN_ONE) && (dual_in_one_response_ok_time == 1)) {
                         Log.e("resume", "APPLY_BOTH_EARBUD_IN_ONE 1");
+						dual_in_one_response_ok_time = 0;
                         resumeFlg = false;
                         resumeSegment = 0;
                         sendCmdDelayed(CMD_SEND_FILE_INFO, 0);
@@ -1872,25 +1968,50 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     }
                 }
                 else {
-
-                    int segment = ArrayUtil.bytesToIntLittle(breakpoint);
-                    Log.e("segment", segment + "");
-                    if (segment != 0) {
-                        resumeFlg = true;
-                        mOtaPacketCount = segment / (1024 * 4);
-                        updateInfo(getString(R.string.resume_start));
-                        sendCmdDelayed(CMD_LOAD_FILE_FOR_NEW_PROFILE, 0);
-                        Log.e("mOtaData is null", "resume mOtaPacketCount" + mOtaPacketCount);
-                        resumeFlg = false;
-                        Log.e("resume", "resume mOtaPacketCount" + mOtaPacketCount);
+                    if ((daulApply == APPLY_BOTH_EARBUD_IN_ONE) && (dual_in_one_response_ok_time == 1)) 
+					{
+					    dual_in_one_response_ok_time = 0;
+					    int segment = ArrayUtil.bytesToIntLittle(breakpoint);
+                        Log.e("segment", segment + "");
+                        if (segment != 0) {
+	                        resumeFlg = true;
+	                        mOtaPacketCount = segment / (1024 * 4);
+	                        updateInfo(getString(R.string.resume_start));
+	                        sendCmdDelayed(CMD_LOAD_FILE_FOR_NEW_PROFILE, 0);
+	                        Log.e("mOtaData is null", "resume mOtaPacketCount" + mOtaPacketCount);
+	                        resumeFlg = false;
+	                        Log.e("resume", "resume mOtaPacketCount" + mOtaPacketCount);
+                        }
                     }
+					else if((daulApply == APPLY_BOTH_EARBUD_IN_ONE) && (dual_in_one_response_ok_time == 0))
+					{
+						dual_in_one_response_ok_time = 1;
+						return;
+					}
+					else
+					{
+					    int segment = ArrayUtil.bytesToIntLittle(breakpoint);
+                        Log.e("segment", segment + "");
+                        if (segment != 0) {
+	                        resumeFlg = true;
+	                        mOtaPacketCount = segment / (1024 * 4);
+	                        updateInfo(getString(R.string.resume_start));
+	                        sendCmdDelayed(CMD_LOAD_FILE_FOR_NEW_PROFILE, 0);
+	                        Log.e("mOtaData is null", "resume mOtaPacketCount" + mOtaPacketCount);
+	                        resumeFlg = false;
+	                        Log.e("resume", "resume mOtaPacketCount" + mOtaPacketCount);
+                        }
+					}
+                       		
+					
+                 }
 
-                }
             }
             else if ((data[0] & 0xFF) == 0x87) {
                 removeTimeout();
                 if ((data[1] & 0xFF) == 0x01) {
                     if (daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0) {
+
 						Log.e("0x87 01","dual_in_one_response_ok_time == 0");
                         dual_in_one_response_ok_time = 1;
 					    return;
@@ -1919,8 +2040,23 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     }
                 }
                 else {
-                    onOtaConfigFailed();
-                    sendCmdDelayed(CMD_DISCONNECT, 0);
+					if (daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0) 
+					{
+					    dual_in_one_response_ok_time = 1;
+					    return;
+					}
+					else if(daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 1)
+					{
+					    dual_in_one_response_ok_time = 0;
+                    	onOtaConfigFailed();
+                    	sendCmdDelayed(CMD_DISCONNECT, 0);
+                    	return;
+					}
+					else
+					{
+                    	onOtaConfigFailed();
+                    	sendCmdDelayed(CMD_DISCONNECT, 0);
+					}
                 }
             }
             else if (ArrayUtil.startsWith(data, new byte[]{(byte) 0x8F, 0x42, 0x45, 0x53, 0x54})) { //Get current version response packet:
@@ -1984,8 +2120,9 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
             else if ((data[0] & 0xFF) == 0x91) {//New image apply result response:
                 removeTimeout();
                 if ((data[1] & 0xFF) == 0x01) {
-                    Log.e("received 0x91", "isAppliedSuccessfully, 1 is pass,");
-                    if (daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0) {
+                   if (daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time ==0)
+                    {
+                        Log.e("received 0x91", "isAppliedSuccessfully, 1 is pass,");
                         dual_in_one_response_ok_time = 1;
 						return;
                     }
@@ -1999,6 +2136,19 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                 }
                 else if ((data[1] & 0xFF) == 0x00) {
                     Log.e("received 0x91", " 0 is fail");
+					 if (daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 0)
+					 {
+					 	dual_in_one_response_ok_time = 1;
+						return;
+					 }
+					 else if (daulApply == APPLY_BOTH_EARBUD_IN_ONE && dual_in_one_response_ok_time == 1) {
+                        dual_in_one_response_ok_time = 0;
+                    }
+					 else
+					{
+					    Log.e("received 0x91", " 0 is fail");
+					}
+					
                 }
 
             }
@@ -2222,7 +2372,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
     //获取已连接的蓝牙设备状态
     private int getConnectBt()
     {
-
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         int a2dp = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.A2DP);
         int headset = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET);
         int health = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEALTH);
