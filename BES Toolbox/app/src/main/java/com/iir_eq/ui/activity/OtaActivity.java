@@ -1853,6 +1853,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     else if ((daulApply == APPLY_BOTH_EARBUD_IN_ONE) && (dual_in_one_response_ok_time == 0)) {
                         Log.e("resume", "APPLY_BOTH_EARBUD_IN_ONE 0");
                         dual_in_one_response_ok_time = 1;
+					    return;
                     }
                     else {
                         Log.e("resume", "from 0 fanxiaoli");
@@ -2211,7 +2212,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
                     }
                 } else {
                     updateConnectedBtAddress("请在手机端和耳机配对，以使用相应功能");
-					updateConnectedBtName("==");
+					updateConnectedBtName("--");
                 }
             }
         }, flag);
@@ -2238,7 +2239,7 @@ public abstract class OtaActivity extends BaseActivity implements ConnectCallbac
         if(flag==-1)
         {
             updateConnectedBtAddress("请在设置里连接蓝牙耳机，以使用相应功能");
-			updateConnectedBtName("==");
+			updateConnectedBtName("--");
         }
         return flag;
     }
